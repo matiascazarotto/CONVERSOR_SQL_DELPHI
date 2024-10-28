@@ -1,0 +1,34 @@
+{
+  "name": "SOL_CONVERSOR",
+  "version": "2.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "dist": "electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "electron": "^33.0.2",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "asar": true,
+    "appId": "sol_conversor",
+    "files": [
+      "main.js",
+      "icon.ico",
+      "src/**/*"
+    ],
+    "win": {
+      "icon": "icon.ico"
+    }
+  },
+  "dependencies": {
+    "SOL_CONVERSOR": "file:",
+    "SOLCONVERSOR": "file:"
+  }
+}

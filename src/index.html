@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversor SQL Intersolid</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000000;
+        }
+
+        h1 {
+            text-align: center;
+            color: #d05310;
+        }
+
+        h3 {
+            margin-top: 20px;
+            color: #b0b0b0;
+        }
+
+        textarea {
+            width: 100%;
+            color: rgb(221, 221, 221);
+            height: 150px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            resize: vertical;
+            background-color: #202020;
+        }
+
+        .container {
+            min-width: 800px;
+            margin: auto;
+            background: rgb(10, 10, 10);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .message {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #ffdac7;
+            color: #000000;
+        }
+
+        .title-bar {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 10px;
+        }
+
+        .intersolidimage {
+            display: block;
+            margin: 5px auto;
+            max-width: 150px;
+            opacity: 1;
+            transition: opacity 0.3s;
+        }
+
+        .intersolidimage:hover {
+            opacity: 0.7;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Conversor/Inversor SQL.Add</h1>
+        <img src="assets/intersolid.png" alt="Intersolid" class="intersolidimage">
+        <h3>Entrada:</h3>
+        <textarea id="inputSQL" placeholder="Cole seu SQL aqui..."></textarea>
+        <h3 id="outputTitle">Resultado:</h3>
+        <textarea id="outputSQL" readonly></textarea>
+        <div class="message" id="copyMessage">Resultado copiado para a área de transferência!</div>
+    </div>
+
+    <script>
+        // Função para converter SQL
+        function converterSQL(input) {
+            const lines = input.split('\n');
+            return lines.map(line => {
+                const trimmedLine = line.trim();
+                return trimmedLine ? `SQL.Add('${trimmedLine.replace(/'/g, "''")}');` : '';
+            }).filter(line => line !== '').join('\n');
+        }
+
+        // Função para reverter SQL.Add para SQL
+        function reverterSQL(input) {
+            const lines = input.split('\n');
+            return lines.map(line => {
+                const match = line.match(/SQL\.Add\('(.*)'\);/);
+                return match ? match[1].replace(/''/g, "'") : line;
+            }).filter(line => line !== '').join('\n');
+        }
+
+        // Função para atualizar a saída com base na entrada
+        function atualizarSaida() {
+            const input = document.getElementById('inputSQL').value;
+            const output = input.includes("SQL.Add") ? reverterSQL(input) : converterSQL(input);
+            document.getElementById('outputSQL').value = output;
+
+            copiarResultado(); // Copia o conteúdo atualizado automaticamente
+        }
+
+        function copiarResultado() {
+            const outputTextArea = document.getElementById('outputSQL');
+            outputTextArea.select();
+            document.execCommand('copy');
+
+            // Exibe mensagem de confirmação
+            const message = document.getElementById('copyMessage');
+            message.style.display = 'block';
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 2000);
+        }
+
+        function colarTransferencia() {
+            navigator.clipboard.readText()
+                .then(text => {
+                    document.getElementById('inputSQL').value = text;
+                    atualizarSaida(); // Atualiza o resultado automaticamente
+                })
+                .catch(err => {
+                    console.error('Falha ao colar da área de transferência: ', err);
+                });
+        }
+
+        // Evento de clique para colar automaticamente ao clicar no campo de entrada
+        document.getElementById('inputSQL').addEventListener('click', colarTransferencia);
+
+        // Evento de entrada para a caixa de texto
+        document.getElementById('inputSQL').addEventListener('input', atualizarSaida);
+
+    </script>
+
+
+</body>
+
+</html>
